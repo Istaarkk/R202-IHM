@@ -1,0 +1,41 @@
+﻿<Window x:Class="AnagrammeWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AnagrammeWPF"
+        mc:Ignorable="d"
+        Title="Anagramme" Height="450" Width="574">
+    <Grid Loaded="Window_Loaded">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="573*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="Mot à deviner:" HorizontalAlignment="Left" Margin="31,27,0,0" VerticalAlignment="Top" RenderTransformOrigin="-8.904,-1.812"/>
+        <Button x:Name="Bouton_Valider" Content="Tester" HorizontalAlignment="Left" Margin="157,103,0,0" VerticalAlignment="Top" Click="Button_Valider"/>
+        <Button x:Name="Button_play" Content="Rejouer" HorizontalAlignment="Left" Margin="372,358,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+        <Button x:Name="Button_Quit" Content="Quitter" HorizontalAlignment="Left" Margin="497,358,0,0" VerticalAlignment="Top" Click="Button_Quit_Click"/>
+        <TextBox x:Name="txtReponse" HorizontalAlignment="Left" Margin="31,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged" MaxLines="1" CharacterCasing="Upper"/>
+        <ListBox x:Name="motHistorique" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,261,306,19"/>
+        <GroupBox Header="Proposition" Margin="20,85,363,280" RenderTransformOrigin="0.5,0.5" Panel.ZIndex="-1">
+            <GroupBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </GroupBox.RenderTransform>
+        </GroupBox>
+        <ListBox x:Name="lst_partiejouer" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="327,56,21,96"/>
+        <GroupBox Header="Historique des parties" Margin="327,27,9,91" Panel.ZIndex="-1">
+            <Grid Margin="0,-19,194,284"/>
+        </GroupBox>
+        <GroupBox Header="Essai&#xD;&#xA;" Margin="0,185,271,10" Panel.ZIndex="-1">
+        </GroupBox>
+        <Label x:Name="lblAnagramme" Content="Alphabet" HorizontalAlignment="Left" Margin="45,54,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lbl_essaie" Content="Essais restants : " HorizontalAlignment="Left" Margin="10,224,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="nbessai" Content="" HorizontalAlignment="Left" Margin="104,224,0,0" VerticalAlignment="Top"/>
+
+    </Grid>
+</Window>
