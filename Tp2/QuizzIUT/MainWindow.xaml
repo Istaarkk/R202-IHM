@@ -1,0 +1,33 @@
+﻿<Window x:Name="WNDFenetrePrincipale" x:Class="QuizzIUT.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QuizzIUT"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="412" Width="800">
+    <Grid x:Name="WNDFenetrePrincipale1" Loaded="WNDFenetrePrincipale1_Loaded">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="99*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="39*"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="LBLTitre" Content="Questions pour un BUT" FontSize="30" Margin="0,0,472,0"/>
+        <Label x:Name="LBLQuestion" Content="Insérez la questions ici" HorizontalAlignment="Left" Margin="46,38,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <TextBox x:Name="TBXReponse" HorizontalAlignment="Left" Margin="160,101,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" GotFocus="TBXReponse_GotFocus"/>
+        <Label x:Name="LBLBonnesReponses" Content="Bonne réponses:" HorizontalAlignment="Left" Margin="59,176,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label x:Name="LBLMauvaisesReponses" Content="Mauvaise réponses:" HorizontalAlignment="Left" Margin="59,227,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Slider x:Name="SDRModeNuit" Margin="615,23,114,0" Maximum="1" SmallChange="0" ValueChanged="SDRModeNuit_ValueChanged"/>
+        <Image Margin="587,12,146,311" Grid.Row="1"/>
+        <Image x:Name="IMGMoon" Margin="678,16,82,0" Source="/moon.png" Stretch="Fill" RenderTransformOrigin="3.344,1.001"/>
+        <Image x:Name="IMGSun" Margin="574,14,182,0" Source="/sun.png" Stretch="Fill" RenderTransformOrigin="1.5,0.13"/>
+        <Button x:Name="BTNValider" Content="Button" HorizontalAlignment="Left" Margin="315,101,0,0" Grid.Row="1" VerticalAlignment="Top" Click="BTNValider_Click"/>
+        <Label x:Name="LBLMauvaisesReponsesValeur" Content="0" HorizontalAlignment="Left" Margin="172,227,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label x:Name="LBLBonnesReponsesValeur" Content="0" HorizontalAlignment="Left" Margin="169,176,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="1.214,-0.653"/>
+        <Button x:Name="BTNQuitter" Content="Quitter" HorizontalAlignment="Left" Margin="315,169,0,0" Grid.Row="1" VerticalAlignment="Top" Click="BTNQuitter_Click"/>
+
+    </Grid>
+</Window>
