@@ -1,0 +1,32 @@
+﻿<Window x:Class="MinesweeperWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MinesweeperWPF"
+        mc:Ignorable="d"
+        Title="Minesweeper" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Content="Mon Super Démineur" Grid.Row="0"/>
+
+        <!-- Panneau de configuration -->
+        <StackPanel x:Name="ConfigPanel" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="Taille de la grille:" Margin="0,0,0,5"/>
+            <TextBox x:Name="GridSizeTextBox" Text="10" Width="200" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Nombre de mines:" Margin="0,0,0,5"/>
+            <TextBox x:Name="NbMinesTextBox" Text="10" Width="200" Margin="0,0,0,10"/>
+
+            <Button Content="Commencer le jeu" Click="StartGameButton_Click"/>
+        </StackPanel>
+
+        <!-- Grille de jeu -->
+        <Grid x:Name="GRDGame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="AliceBlue" Grid.Row="1" Visibility="Collapsed">
+        </Grid>
+
+    </Grid>
+</Window>
