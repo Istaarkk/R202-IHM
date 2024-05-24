@@ -12,9 +12,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Label Content="Mon Super Démineur" Grid.Row="0"/>
-
+        <TextBlock Name="TimerTextBlock" Text="Temps écoulé: 0 sec" Margin="288,10,-278,0"/>
         <!-- Panneau de configuration -->
         <StackPanel x:Name="ConfigPanel" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            
+            <Button Name="ShowHistoryButton" Content="Voir l'historique" Click="ShowHistoryButton_Click" Margin="5"/>
+            <ListBox Name="HistoryListBox" Margin="5"/>
             <TextBlock Text="Taille de la grille:" Margin="0,0,0,5"/>
             <TextBox x:Name="GridSizeTextBox" Text="10" Width="200" Margin="0,0,0,10"/>
 
@@ -22,6 +25,8 @@
             <TextBox x:Name="NbMinesTextBox" Text="10" Width="200" Margin="0,0,0,10"/>
 
             <Button Content="Commencer le jeu" Click="StartGameButton_Click"/>
+            
+            
         </StackPanel>
 
         <!-- Grille de jeu -->

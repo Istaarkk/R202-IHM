@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
+
 
 namespace MinesweeperWPF
 {
@@ -14,34 +18,31 @@ namespace MinesweeperWPF
         private int nbCellOpen = 0;
         private int[,] matrix;
         private Button[,] buttons;
+        private DispatcherTimer timer;
+        private int elapsedTime = 0;
+        private List<GameHistory> gameHistory = new List<GameHistory>();
+        private bool isFirstClick = true; // Variable pour suivre le premier clic
 
         public MainWindow()
         {
             InitializeComponent();
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += Timer_Tick;
+            timer.Start(); 
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            elapsedTime++;
+            TimerTextBlock.Text = $"Temps ecoulé: {elapsedTime} sec";
         }
 
         private void StartGameButton_Click(object sender, RoutedEventArgs e)
         {
             if (int.TryParse(GridSizeTextBox.Text, out gridSize) && int.TryParse(NbMinesTextBox.Text, out nbMine))
             {
-                nbFlag = nbMine;
-                matrix = new int[gridSize, gridSize];
-                nbCellOpen = 0;
-                GRDGame.Children.Clear();
-                GRDGame.ColumnDefinitions.Clear();
-                GRDGame.RowDefinitions.Clear();
-
-                for (int i = 0; i < gridSize; i++)
-                {
-                    GRDGame.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                    GRDGame.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-                }
-
                 InitGame();
-
-                // Masquer le panneau de configuration et afficher la grille de jeu
-                ConfigPanel.Visibility = Visibility.Collapsed;
-                GRDGame.Visibility = Visibility.Visible;
             }
             else
             {
@@ -49,16 +50,70 @@ namespace MinesweeperWPF
             }
         }
 
+        /* private void StopGame()
+         {
+             timer.Stop();
+             for(int i =0; i < gridSize; ++i)
+             {
+                 for (int j = 0; j < gridSize; ++j)
+                 {
+                     buttons[i, j].IsEnabled = false;
+
+                 }
+
+             }
+         }*/
+
         private void InitGame()
         {
-            nbCellOpen = 0;
-            CreateGrid();
-            PlaceMines();
-        }
+            try
+            {
+                nbFlag = nbMine;
+                matrix = new int[gridSize, gridSize];
+                nbCellOpen = 0;
+                elapsedTime = 0; // Réinitialiser le temps écoulé à chaque nouvelle partie
+                TimerTextBlock.Text = $"Temps écoulé: {elapsedTime} sec";
+                isFirstClick = true; // Réinitialiser le suivi du premier clic
 
+
+
+                GRDGame.Children.Clear();
+                GRDGame.ColumnDefinitions.Clear();
+                GRDGame.RowDefinitions.Clear();
+
+            }
+            catch (Exception)
+            {
+
+            }
+        
+            for (int i = 0; i < gridSize; i++)
+            {
+                GRDGame.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                GRDGame.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+            }
+
+            CreateGrid();
+
+            // Masquer le panneau de configuration et afficher la grille de jeu
+            ConfigPanel.Visibility = Visibility.Collapsed;
+            GRDGame.Visibility = Visibility.Visible;
+        }
+        
         private void CreateGrid()
         {
-            buttons = new Button[gridSize, gridSize];
+          if(gridSize <= 1)
+            {
+                MessageBox.Show("Entrez une valeur plus grande que 1");
+                
+            }
+          
+            try
+            {
+                buttons = new Button[gridSize, gridSize];
+            }
+            catch(Exception) { }
+
             for (int i = 0; i < gridSize; i++)
             {
                 for (int j = 0; j < gridSize; j++)
@@ -78,19 +133,21 @@ namespace MinesweeperWPF
             }
         }
 
-        private void PlaceMines()
+        private void PlaceMines(int firstClickX, int firstClickY)
         {
             Random rand = new Random();
-            for (int i = 0; i < nbMine; ++i)
+            int minesPlaced = 0;
+            while (minesPlaced < nbMine)
             {
                 int x = rand.Next(gridSize);
                 int y = rand.Next(gridSize);
-                if (matrix[x, y] == -1)
+                // Ne pas placer de mine sur la cellule cliquée en premier
+                if ((x == firstClickX && y == firstClickY) || matrix[x, y] == -1)
                 {
-                    i--;
                     continue;
                 }
                 matrix[x, y] = -1;
+                minesPlaced++;
             }
         }
 
@@ -108,10 +165,21 @@ namespace MinesweeperWPF
                     return;
                 }
 
+                if (isFirstClick)
+                {
+                    isFirstClick = false;
+                    PlaceMines(x, y); // Placer les mines après le premier clic en excluant cette cellule
+                }
+
                 if (matrix[x, y] == -1)
                 {
-                    MessageBox.Show("BOOM! Vous avez perdu.");
-                    InitGame();
+                    timer.Stop();
+                    MessageBox.Show("BOOM! Vous avez perdu.", "Partie terminée");
+                    //StopGame();
+                    SaveGame(false);
+                    ConfigPanel.Visibility = Visibility.Visible;
+                    GRDGame.Visibility = Visibility.Hidden;
+                    timer.Start(); // Redémarrer le timer après avoir réinitialisé le jeu
                     return;
                 }
 
@@ -129,33 +197,46 @@ namespace MinesweeperWPF
                 return;
 
             int bombs = CountAdjacentBombs(x, y);
-
-            if (bombs == 0)
+            try
             {
-                buttons[x, y].Content = "0";
+                if (bombs == 0)
+                {
+                    buttons[x, y].Content = "0";
+                }
+                else
+                {
+                    buttons[x, y].Content = bombs.ToString();
+                }
+
+                buttons[x, y].Background = Brushes.LightGray;
+                nbCellOpen++;
+
+                buttons[x, y].Tag = "opened";
+
+                if (bombs == 0)
+                {
+                    OpenCell(x - 1, y);
+                    OpenCell(x + 1, y);
+                    OpenCell(x, y - 1);
+                    OpenCell(x, y + 1);
+                }
+
+                if (nbCellOpen == gridSize * gridSize - nbMine)
+                {
+                    timer.Stop();
+                    MessageBox.Show("Félicitations! Vous avez gagné!");
+                    //StopGame();
+                    SaveGame(true);
+                    ConfigPanel.Visibility = Visibility.Visible;
+                    GRDGame.Visibility = Visibility.Hidden;
+                    timer.Start(); // Redémarrer le timer après avoir réinitialisé le jeu
+                    return;
+
+                }
             }
-            else
+            catch(Exception)
             {
-                buttons[x, y].Content = bombs.ToString();
-            }
 
-            buttons[x, y].Background = Brushes.LightGray;
-            nbCellOpen++;
-
-            buttons[x, y].Tag = "opened";
-
-            if (bombs == 0)
-            {
-                OpenCell(x - 1, y);
-                OpenCell(x + 1, y);
-                OpenCell(x, y - 1);
-                OpenCell(x, y + 1);
-            }
-
-            if (nbCellOpen == gridSize * gridSize - nbMine)
-            {
-                MessageBox.Show("Félicitations! Vous avez gagné!");
-                InitGame();
             }
         }
 
@@ -202,5 +283,35 @@ namespace MinesweeperWPF
 
             e.Handled = true;
         }
+
+        private void SaveGame(bool won)
+        {
+            gameHistory.Add(new GameHistory
+            {
+                Date = DateTime.Now,
+                GridSize = gridSize,
+                Mines = nbMine,
+                Time = elapsedTime,
+                Won = won
+            });
+        }
+
+        private void ShowHistoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            HistoryListBox.Items.Clear();
+            foreach (var game in gameHistory)
+            {
+                HistoryListBox.Items.Add($"{game.Date} - {game.GridSize}x{game.GridSize} - Mines: {game.Mines} - Temps: {game.Time} sec - {(game.Won ? "Gagné" : "Perdu")}");
+            }
+        }
+    }
+
+    public class GameHistory
+    {
+        public DateTime Date { get; set; }
+        public int GridSize { get; set; }
+        public int Mines { get; set; }
+        public int Time { get; set; }
+        public bool Won { get; set; }
     }
 }
